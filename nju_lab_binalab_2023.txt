@@ -1,0 +1,318 @@
+//*************************************phase1**************************************
+objdump -d -j .rodata 
+找到 <学号>.phase1 后面的部分，把那句话抄一下就行了。
+//*************************************phase2**************************************
+/*
+双精度浮点数运算，将phase最后进行比较的数，
+先表示为双精度浮点数，然后取后32位，转化为十进制数，作为答案第一部分，
+再取前32位，转化为十进制数，作为第二部分，两部分之间用空格分隔即可
+
+计算器：https://tooltt.com/ieee/要先转换成十进制，再用此计算器
+*/
+//*************************************phase3**************************************
+/*
+首先可以在phase找到一个字符串与立即数的比较，从而确定字符串首位，
+其余5位分别为首位ASCII加上1,3,7,15,31（规律：x=2x+1）
+！！！！！！全服统一答案？！
+RSPWSG
+*/
+//*****************************************phase4*******************************************
+/*
+一个Switch case语句，通过字符串控制跳转位置，来得到最终的值
+*/
+phase():
+    x = 0;
+    while(str[x]存在) 
+    {
+        switch(str[x]-0x41)//注意是用ASCII做减法
+        {
+            //注意：每一个case后面都应有break，此处省略不写
+            case 0:
+            x最高位设置为0
+            case 1:
+            x最高位设置为1
+            case 2:
+            x = (x==0);
+            case 3:
+            x的首位1变0,0变1，其余不变
+            case 4:
+            x左移
+            case 5:
+            x算术右移
+        }
+    }
+/*
+一个比较机械的数字构造方案：
+    先首位置1或置0，然后右移，如此循环32次即可。
+*/
+
+//*****************************************phase5*******************************************
+//全局变量<number_list>，可以objdump -d -j .data phase5查看  
+int* y = &number_list[0];
+int phase()
+{
+    unsigned x;
+    sscanf(str,"%x",x);//将输入的字符串以十六进制数读入
+    x = seek(x, y, 0x20);
+    if(x == 0x5e) return 1;
+    else return 0;
+}
+seek(unsigned x, int *y, int z = 0x20)
+	if z > 1:
+		z >>= 2;
+		if x is 偶数: 
+			x >>= 2;
+			seek(x, y, z);
+		else:
+			y += 4 * z;
+			x >>= 2;
+			seek(x, y, z);
+	else:
+		return y;
+
+/*
+首先在number_list中找到phase最后与seek返回值作比较的那个数，通过seek中的y += 4 * z来改变y指向的内容，使y指向那个数，从而确定x的值。
+*/
+//*******************************************phase6*******************************************
+//全局变量，可以objdump -d -j .data phase6查看  
+char cmat[]={...};//太多了，懒得写
+unsigned rows[3];
+unsigned cols[3];
+char cookie[] = {71,41,77};
+(&cookie[0] =  0x804a14a)
+int phase():
+	sscanf(str,"%u %u %u %u %u %u",rows[0],cols[0],rows[1],cols[1],rows[2],cols[2]);
+	unsigned x = 0;//x is at %ebp-0xc
+	while x<=2:
+		if row[x]>3: return 0;
+		else:
+			if cols[x] <= 7 then:
+				if cookie[x]==cmat[rows[x]*8+cols[x]] :
+					x += 1;
+					continue;
+				else return 0;
+			else return 0;
+	return 1;
+
+/*
+结果：
+rows[]={3,2,0}
+cols[]={3,1,4}
+字符串：3 3 2 1 0 4
+*/
+
+
+
+
+//******************************************** phase7 ***************************************
+//这是函数指针数组
+//operators first addr: 0x804c0e0
+int (*opera[])(int) = {
+    opfunc0,
+    opfunc1,
+    opfunc2,
+    opfunc3,
+    opfunc4,
+    opfunc5,
+    opfunc6,
+    opfunc7,
+    opfunc8,
+    opfunc9,
+    opfunc10,
+    opfunc11,
+    opfunc12,
+    opfunc13,
+    opfunc14,
+    opfunc15
+};
+int phase()
+{
+    int x = 1;//%ebp-0x10
+    int y[] = {...};
+    edx = *y + 8;//y = %ebp-0x20
+    eax = *y + 4;
+    sscanf(str, "%d %d %d", y[0], y[1], y[2]);
+    int z = 0;//z:%ebp-0xc
+    while(z <= 2)
+    {
+        y[3] = y[z];
+        if(y[3] < 0 || y[3] > 0xf) return 0;
+        else{
+            x = opera[y[3]](x);//调用函数
+        }
+        z++;
+    }
+    return (x == 0x8cf);
+}
+
+int opfunc0(int x)
+{
+    int tmp = x * 5;
+    return 2 * tmp + x;
+}
+int opfunc1(int x)
+{
+    return x * 0x2b;
+}
+int opfunc2(int x)
+{
+    int tmp = x;
+    return (tmp*4 + x)*8 + x;
+}
+int opfunc3(int x)
+{
+    return (x*8 + x)*4 + x;
+}
+int opfunc4(int x)
+{
+    return x*0x2f;
+}
+int opfunc5(int x)
+{
+    return x*8 - x;
+}
+int opfunc6(int x)
+{
+    return x*0x35;
+}
+int opfunc7(int x)
+{
+    return (x*8 + x) * 2 + x;
+}
+int opfunc8(int x)
+{
+    return x * 0x1d;
+}
+int opfunc9(int x)
+{
+    return x*4 + x;
+}
+int opfunc10(int x)
+{
+    return (x*0x20 - x);
+}
+int opfunc11(int x)
+{
+    return (2 * x + x)*4 + x;
+}
+int opfunc12(int x)
+{
+    return x * 0x17;
+}
+int opfunc13(int x)
+{
+    return x*0x10 + x;
+}
+int opfunc14(int x)
+{
+    return 2 * x;
+}
+int opfunc15(int x)
+{
+    return 3 * x;
+}
+//编写一个程序用来寻找合适的函数：
+void set()
+{
+    for(int i=0;i<16;i++)
+        for(int j=0;j<16;j++)
+            for (int k = 0; k < 16; k++)
+            {
+                int x = 1;
+                x = opera[i](x);
+                x = opera[j](x);
+                x = opera[k](x);
+                if(x==0x8cf)
+                    printf("i: %d, j: %d, k: %d   res: %#x\n", i,j,k,x);
+
+            }
+}
+/*
+结果：0 2 9
+*/
+//****************************  phase 8  ***************************************
+
+//objdump -d -j .data phase8 可以看到一个<queue>和一个<cookie>
+char cookie[]={0x52,0x54,0x4e,0x47,0x4d,0x57,0x45,0x5a,0x58};
+//节点有两个变量，val1用于和输入字符串相匹配，val2用于和cookie相匹配。
+struct node
+{
+    char val1;
+    char val2;
+    node* next;
+};
+struct list
+{
+    node* head;
+}queue;
+//head地址在0x804c190,head指向的地址0x804c140
+//函数的返回值并没有被利用到，这个函数的实质是当参数str[y]与链表某节点的变量val1相同时，则将这个节点移至开头作为head
+char* access(char str[y])
+{
+    char x = str[y];//%ebp-0x14
+    char* y = 0;//%ebp-0xc
+    node* z = queue.head;//%ebp-0x4
+    node* k = NULL;//%ebp-0x8
+    while(z != NULL)
+    {
+        if(z.val1 != x)
+        {
+            k = z;
+            z = z.next;
+        }
+        else{
+            y = &z.val2;
+            if(z == queue.head) return y;
+            else{
+                k.next = z.next;
+                z->next = queue.head;
+                queue.head = z;
+                return y;
+            }
+        }
+    }
+
+
+}
+
+int phase()
+{
+    if(str.length == 0xa)
+    {
+        int y = 0;//%ebp - 0x10
+        while(y <= 9)
+        {
+            str[y]->eax
+            access(str[y]);
+            y++;
+        }
+        node* p = queue.head;//%ebp - 0xc
+        y = 0;
+        while(p != NULL)
+        {
+            if(cookie[y] != p.val2) return 0; 
+            p = p.next;
+            y++;
+        }
+
+    }
+    else return 0;
+}
+
+/*
+根据cookie的顺序调整链表的顺序（其实从后往前将cookie的值对应的val1对应的ASCII字符输入进去就可以了）
+
+cookie： 52 54 4e 4c 47 4d 57 45 5a 58
+原顺序--->
+4e 4c 47 5a 54 58 4d 52 45 57
+val1：
+7a 6c 6e 71 64 69 61 65 67 79
+z l n q d i a e g y
+
+结果：ygeaidqnlz
+
+*/
+
+
+
+
