@@ -79,7 +79,9 @@ char cmat[]={...};//太多了，懒得写
 unsigned rows[3];
 unsigned cols[3];
 char cookie[] = {71,41,77};
-(&cookie[0] =  0x804a14a)
+如果不喜欢用gdb去看cookie的内容，可以用下面的方法：
+objdump -d -j .rodata phase6 
+(在.data可以找到首地址&cookie[0] =  0x804a14a)
 int phase():
 	sscanf(str,"%u %u %u %u %u %u",rows[0],cols[0],rows[1],cols[1],rows[2],cols[2]);
 	unsigned x = 0;//x is at %ebp-0xc
@@ -144,7 +146,7 @@ int phase()
     }
     return (x == 0x8cf);
 }
-
+//注意：一下内容仅供参考，每个人的函数是不一样了！！！不一样！！！只能自己写！！！
 int opfunc0(int x)
 {
     int tmp = x * 5;
