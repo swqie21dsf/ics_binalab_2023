@@ -6,15 +6,24 @@ objdump -d -j .rodata
 双精度浮点数运算，将phase最后进行比较的数，
 先表示为双精度浮点数，然后取后32位，转化为十进制数，作为答案第一部分，
 再取前32位，转化为十进制数，作为第二部分，两部分之间用空格分隔即可
-
-计算器：https://tooltt.com/ieee/要先转换成十进制，再用此计算器
+十六进制转十进制https://jisuan5.com/hexadecimal-to-binary/
+十进制转机器数计算器：https://tooltt.com/ieee/
 */
 //*************************************phase3**************************************
 /*
-首先可以在phase找到一个字符串与立即数的比较，从而确定字符串首位，
-其余5位分别为首位ASCII加上1,3,7,15,31（规律：x=2x+1）
-！！！！！！全服统一答案？！
-RSPWXG
+phase():
+	if str.length==6 then:
+		if str[0] == 0x44 then:
+			char x = 0x1;
+			int y = 0x1;
+			while y <= 5:
+				if str[y]==str[y-1]^x do:
+				x = 2*x + 1;
+				y++；
+从第二位开始，每一位都是上一位与x异或的结果，而x的值分别为1,3,7,15,31（十进制下的）。
+			
+				
+
 */
 //*****************************************phase4*******************************************
 /*
@@ -59,13 +68,13 @@ int phase()
 }
 seek(unsigned x, int *y, int z = 0x20)
 	if z > 1:
-		z >>= 2;
+		z /  = 2;
 		if x is 偶数: 
-			x >>= 2;
+			x /= 2;
 			seek(x, y, z);
 		else:
 			y += 4 * z;
-			x >>= 2;
+			x /= 2;
 			seek(x, y, z);
 	else:
 		return y;
@@ -302,7 +311,7 @@ int phase()
 }
 
 /*
-根据cookie的顺序调整链表的顺序（其实从后往前将cookie的值对应的val1对应的ASCII字符输入进去就可以了）
+根据cookie的顺序调整链表的顺序（从后往前将cookie的值对应的val1对应的ASCII字符输入进去就可以了）
 
 cookie： 52 54 4e 4c 47 4d 57 45 5a 58
 原顺序--->
@@ -310,7 +319,6 @@ cookie： 52 54 4e 4c 47 4d 57 45 5a 58
 val1：
 7a 6c 6e 71 64 69 61 65 67 79
 z l n q d i a e g y
-
 结果：ygeaidqnlz
 
 */
