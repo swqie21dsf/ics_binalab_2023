@@ -30,8 +30,8 @@ phase():
 一个Switch case语句，通过字符串控制跳转位置，来得到最终的值
 */
 phase():
-    x = 0;
-    while(str[x]存在) 
+    y = 0;
+    while(str[y]存在) 
     {
         switch(str[x]-0x41)//注意是用ASCII做减法
         {
@@ -49,6 +49,7 @@ phase():
             case 5:
             x算术右移
         }
+	y++;
     }
 /*
 一个比较机械的数字构造方案：
