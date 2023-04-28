@@ -31,9 +31,10 @@ phase():
 */
 phase():
     y = 0;
+    x = 0;
     while(str[y]存在) 
     {
-        switch(str[x]-0x41)//注意是用ASCII做减法
+        switch(str[y]-0x41)//注意是用ASCII做减法
         {
             //注意：每一个case后面都应有break，此处省略不写
             case 0:
@@ -51,6 +52,7 @@ phase():
         }
 	y++;
     }
+    if(x == 0x112ab3648 ) return 1;
 /*
 一个比较机械的数字构造方案：
     先首位置1或置0，然后右移，如此循环32次即可。
